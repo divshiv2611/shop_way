@@ -6,8 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.shopway.adapters.CategoryAdapter;
+import com.example.shopway.adapters.ProductAdapter;
 import com.example.shopway.databinding.ActivityMainBinding;
 import com.example.shopway.model.Category;
+import com.example.shopway.model.Product;
 
 import java.util.ArrayList;
 
@@ -17,12 +19,20 @@ public class MainActivity extends AppCompatActivity {
     CategoryAdapter categoryAdapter;
     ArrayList<Category> categories;
 
+    ProductAdapter productAdapter;
+    ArrayList<Product> products;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding= ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        initCategories();
+        initProducts();
 
+    }
+
+    void initCategories(){
         categories= new ArrayList<>();
         categories.add(new Category("Sports","data:image/png;base64,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","#18ab4e","some description",1));
         categories.add(new Category("Sports","data:image/png;base64,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","#18ab4e","some description",1));
@@ -37,5 +47,24 @@ public class MainActivity extends AppCompatActivity {
         GridLayoutManager layoutManager=new GridLayoutManager(this ,4);
         binding.categoriesList.setLayoutManager(layoutManager);
         binding.categoriesList.setAdapter(categoryAdapter);
+
+    }
+
+    void initProducts(){
+        products=new ArrayList<>();
+        products.add(new Product("Dilmah Ceylon Black Tea","https://tutorials.mianasad.com/ecommerce/uploads/product/1666773461638.png","",12,12,1,1));
+        products.add(new Product("Dilmah Ceylon Black Tea","https://tutorials.mianasad.com/ecommerce/uploads/product/1666773461638.png","",12,12,1,1));
+        products.add(new Product("Dilmah Ceylon Black Tea","https://tutorials.mianasad.com/ecommerce/uploads/product/1666773461638.png","",12,12,1,1));
+        products.add(new Product("Dilmah Ceylon Black Tea","https://tutorials.mianasad.com/ecommerce/uploads/product/1666773461638.png","",12,12,1,1));
+        products.add(new Product("Dilmah Ceylon Black Tea","https://tutorials.mianasad.com/ecommerce/uploads/product/1666773461638.png","",12,12,1,1));
+        products.add(new Product("Dilmah Ceylon Black Tea","https://tutorials.mianasad.com/ecommerce/uploads/product/1666773461638.png","",12,12,1,1));
+
+
+        productAdapter =new ProductAdapter(this,products);
+
+
+        GridLayoutManager layoutManager=new GridLayoutManager(this,2);
+        binding.productList.setLayoutManager(layoutManager);
+        binding.productList.setAdapter(productAdapter);
     }
 }
